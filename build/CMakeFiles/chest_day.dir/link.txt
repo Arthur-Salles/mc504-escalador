@@ -1,0 +1,3 @@
+"C:\Program Files\CMake\bin\cmake.exe" -E rm -f CMakeFiles\chest_day.dir/objects.a
+C:\PROGRA~1\CODEBL~1\MinGW\bin\ar.exe qc CMakeFiles\chest_day.dir/objects.a @CMakeFiles\chest_day.dir\objects1.rsp
+C:\PROGRA~1\CODEBL~1\MinGW\bin\gcc.exe  -Wall -pthread -Wl,--whole-archive CMakeFiles\chest_day.dir/objects.a -Wl,--no-whole-archive -o chest_day.exe -Wl,--out-implib,libchest_day.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\chest_day.dir\linkLibs.rsp

@@ -1,0 +1,3 @@
+C:/grad/mc504/mc504-escalador/build/CMakeFiles/chest_day.dir
+C:/grad/mc504/mc504-escalador/build/CMakeFiles/edit_cache.dir
+C:/grad/mc504/mc504-escalador/build/CMakeFiles/rebuild_cache.dir
