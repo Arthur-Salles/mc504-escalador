@@ -3,9 +3,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <math.h>
 
-#define N_BENCHES 2
-#define N_USERS 5
+
+#define N_MACHINES_PER_EXERCISE 1
+#define N_EXERCISES 2
+#define N_USERS 1
 
 typedef struct {
 	int reps;
@@ -16,72 +19,69 @@ typedef struct {
 
 /* ----- Semaphores  ------  */  
 
-sem_t sem_fila;
-sem_t sem_machine[N_BENCHES];
-sem_t sem_machine_seat[N_BENCHES];
-sem_t sem_escreve_visor;
-sem_t sem_le_visor;
+sem_t sem_fila_exercicios[N_EXERCISES];
+sem_t sem_machines[N_EXERCISES]; // entrou ou nao na maquina 
+sem_t sem_aloca_fila;
 
-int machine;
-int usersWaiting[N_USERS];
-int machineUsers[N_BENCHES];
+int fila[N_EXERCISES][N_MACHINES_PER_EXERCISE];
 
-void* bench_set(void* args) {
 
-	User* arg = (User *) args;
-	long tid = (long) arg->id;
-	
-	printf("%ld -> Adjusting weights...\n", tid);
-	sleep(2);
+// sem_t sem_escreve_visor;
+// sem_t sem_le_visor;
 
-	int missing_reps = arg->reps;
-	int missing_sets = arg->sets;
-	while (missing_sets > 0){
+// int machine;
+// int usersWaiting[N_USERS];
+// int machineUsers[N_BENCHES];
+
+int get_menor_fila_id(){
+
+
+	// for(int i = 0; i < N_EXERCISES; i++){
 		
-		while (missing_reps > 0){
-			missing_reps -= 1;
-		}
-		missing_sets -= 1;
-		printf("%ld -> Remaining Sets:%d\n", tid, missing_sets);
-	}
-	
-	return NULL;
-}
+	// 	int fila_size = 0;
+
+	// 	for (int j = 0; j < N_MACHINES_PER_EXERCISE; j++){
+			
+	// 		if (fila[i][j] != -1){
+	// 			fila_size += 1
+	// 		}
+
+	// 	}
+
+	// }
+	return 0;
+} 
 
 void* f_user(void *v) {
+
 	int id = *(int*) v;
 	int my_machine, my_position;
 	int i = 0;
-
-	// usuario chegou na academia
-	sem_wait(&sem_fila);
-
-	/* Aloca um lugar na fila pro usuario */
-
-    for (i = 0; i < N_USERS; i++) {
-    	usersWaiting[id] = id;
-	}
-
-	//imprime que o user chegou na academia e esta esperando
-	sem_post(&sem_fila);
-
 	
-    sem_wait(&sem_le_visor); /* Cliente espera o visor mostrar uma maquina livre. */
-    my_machine = machine; 
-    sem_post(&sem_escreve_visor); /* Permite que outra maquina escreva informe que esta livre. */
 
-	sem_wait(&sem_machine[my_machine]); // começa a usar a maquina
+	sem_wait(&sem_aloca_fila);
 
-	sem_wait(&sem_fila);
-	usersWaiting[id] = -1;
-	sem_post(&sem_fila);
+	// aloca o usuario na menor fila 
 
-	machineUsers[my_machine] = id;
-	// faz o exercicio: pode chamar a func bench_set()
-	printf("User %p", id, " is using bench %p", my_machine);
+	// SUPOR QUE ELE ENTRE NA MENOR FILA
 
-	sem_post(&sem_machine_seat[my_machine]); //libera a cadeira da maquina
-	sem_post(&sem_machine[my_machine]); // libera maquina que vc usou
+	int fila_id = get_menor_fila_id();
+	
+
+	sem_wait(&sem_fila_exercicios[fila_id]);
+
+	sem_post(&sem_aloca_fila);
+
+	// aloca o user na fila
+
+
+	sem_post(&sem_fila_exercicios[fila_id]);
+
+
+	sem_wait(&sem_machines[fila_id]);
+
+
+
 }
 
 void* f_machine(void *v) {
@@ -109,33 +109,17 @@ int main() {
 	pthread_t thr_users[N_USERS], thr_machines[N_BENCHES];
   	int i, id_cl[N_USERS], id_mac[N_BENCHES];
 
-	//sem_init(&sem_cadeiras, 0, N_CADEIRAS);
 	sem_init(&sem_escreve_visor, 0, 1);
 	sem_init(&sem_le_visor, 0, 0);
-	sem_init(&sem_fila, 0, 1);
+	sem_init(&sem_fila, 0, 0);
 
-	// for (t = 0; t < N_USERS; t++) {
 
-	// 	att[t].id = t;
-	// 	att[t].reps = 8;
-	// 	att[t].sets = 3;
 
-	// 	if (pthread_create(th_vec + t, NULL, &bench_set, &att[t]) != 0){ // th + i = &th[i]
-	// 		perror("Failed to create thread");
-	// 		return 1;
-	// 	}
-	// }
+	printf("odaodai\n");
 
-	// Wait for all threads to finish
-	// for (t = 0; t < N_USERS; t++) {
-	// 	if  (pthread_join(th_vec[t], NULL)){
-	// 		return 2;
-	// 	}
-	// }
-
-	for (i = 0; i < N_BENCHES; i++) {
-		sem_init(&sem_machine_seat[i], 0, 1);
-		sem_init(&sem_machine[i], 0, 0);
+	for (i = 0; i < N_EXERCISES; i++) {
+		// sem_init(&sem_machine_seat[i], 0, 0);
+		sem_init(&sem_machines[i], 0, N_MACHINES_PER_EXERCISE);
     }
 
 	for (i = 0; i < N_USERS; i++) {
