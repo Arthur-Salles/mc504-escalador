@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include <math.h>
 
-
+#define FILA_LIMITE 3
 #define N_MACHINES_PER_EXERCISE 1
 #define N_EXERCISES 2
 #define N_USERS 1
@@ -19,9 +19,11 @@ typedef struct {
 
 /* ----- Semaphores  ------  */  
 
-sem_t sem_fila_exercicios[N_EXERCISES];
-sem_t sem_machines[N_EXERCISES]; // entrou ou nao na maquina 
+sem_t sem_espera_exercicio[N_EXERCISES];
+sem_t sem_maquina_disponivel[N_EXERCISES]; // entrou ou nao na maquina 
 sem_t sem_aloca_fila;
+sem_t sem_maq_ocupada[N_EXERCISES];
+sem_t sem_exercicio_feito[N_EXERCISES];
 
 int fila[N_EXERCISES][N_MACHINES_PER_EXERCISE];
 
@@ -35,20 +37,6 @@ int fila[N_EXERCISES][N_MACHINES_PER_EXERCISE];
 
 int get_menor_fila_id(){
 
-
-	// for(int i = 0; i < N_EXERCISES; i++){
-		
-	// 	int fila_size = 0;
-
-	// 	for (int j = 0; j < N_MACHINES_PER_EXERCISE; j++){
-			
-	// 		if (fila[i][j] != -1){
-	// 			fila_size += 1
-	// 		}
-
-	// 	}
-
-	// }
 	return 0;
 } 
 
@@ -68,19 +56,23 @@ void* f_user(void *v) {
 	int fila_id = get_menor_fila_id();
 	
 
-	sem_wait(&sem_fila_exercicios[fila_id]);
+	// e o espera
+	sem_wait(&sem_espera_exercicio[fila_id]);
 
 	sem_post(&sem_aloca_fila);
 
 	// aloca o user na fila
 
+	sem_wait(&sem_maquina_disponivel[fila_id]);
 
-	sem_post(&sem_fila_exercicios[fila_id]);
+	printf("entrou na maquina da fila %d\n", fila_id);
+	
+	sem_post(&sem_espera_exercicio[fila_id]); //esper
+	sem_post(&sem_maq_ocupada[fila_id]);
 
-
-	sem_wait(&sem_machines[fila_id]);
-
-
+	sem_wait(&sem_exercicio_feito[fila_id]);
+	sem_post(&sem_maquina_disponivel[fila_id]);
+	printf("e o treinas \n");
 
 }
 
@@ -88,14 +80,13 @@ void* f_machine(void *v) {
 	int id = *(int*)v;
   
   	while(1) {
-    	sem_wait(&sem_escreve_visor); //outra maquina nao pode escrever no visor enquanto um usuario nao pega-la
-		machine = id;
-		sem_post(&sem_le_visor); //um novo usuario pode ler o visor, ja que ele foi atualizado
-		
-		/* Para o exc nao ser imediato.*/
+
+
+		sem_wait(&sem_maq_ocupada[id]);
+		printf("anabolico\n");
 		sleep(1);
-		
-		sem_wait(&sem_machine_seat[id]); // cadeira da maquina fica ocupada
+		sem_post(&sem_exercicio_feito[id]);
+
  	}
   	return NULL;
 }
@@ -106,28 +97,34 @@ int main() {
 
 	//User att[N_USERS];
 	//pthread_t th_vec[N_USERS];
-	pthread_t thr_users[N_USERS], thr_machines[N_BENCHES];
-  	int i, id_cl[N_USERS], id_mac[N_BENCHES];
+	pthread_t thr_users[N_USERS], thr_machines[N_EXERCISES * N_MACHINES_PER_EXERCISE] ;
+  	int i, id_cl[N_USERS], id_mac[N_EXERCISES * N_MACHINES_PER_EXERCISE];
 
-	sem_init(&sem_escreve_visor, 0, 1);
-	sem_init(&sem_le_visor, 0, 0);
-	sem_init(&sem_fila, 0, 0);
+	sem_t sem_espera_exercicio[N_EXERCISES];
 
-
-
-	printf("odaodai\n");
+	for (int i = 0; i < N_EXERCISES; i++){
+		sem_init(&sem_espera_exercicio[i], 0, FILA_LIMITE);
+	}
 
 	for (i = 0; i < N_EXERCISES; i++) {
-		// sem_init(&sem_machine_seat[i], 0, 0);
-		sem_init(&sem_machines[i], 0, N_MACHINES_PER_EXERCISE);
+		sem_init(&sem_maquina_disponivel[i], 0, N_MACHINES_PER_EXERCISE);
     }
+	
+	sem_init(&sem_aloca_fila, 0, 1);
+	
+	for (int i = 0; i < N_EXERCISES; i++){
+		sem_init(&sem_maq_ocupada[i], 0, 1);
+		sem_init(&sem_exercicio_feito[i], 0, 1);
+
+	}
+	
 
 	for (i = 0; i < N_USERS; i++) {
 		id_cl[i] = i;
 		pthread_create(&thr_users[i], NULL, f_user, (void*) &id_cl[i]);
 	}
 
-	for (i = 0; i < N_BENCHES; i++) {
+	for (i = 0; i < N_EXERCISES * N_MACHINES_PER_EXERCISE; i++) {
 		id_mac[i] = i;
 		pthread_create(&thr_machines[i], NULL, f_machine, (void*) &id_mac[i]);
 	}
@@ -136,7 +133,7 @@ int main() {
 		pthread_join(thr_users[i], NULL);
 	}
 
-	for (i = 0; i < N_BENCHES; i++) {
+	for (i = 0; i < N_EXERCISES * N_MACHINES_PER_EXERCISE; i++) {
 		pthread_join(thr_machines[i], NULL);
 	}
 
