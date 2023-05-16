@@ -63,7 +63,7 @@ void* f_maromba(void* maromba_args) {
 
 
 // bench press
-void* f_bench_press(void* exercises_args){
+void* f_treino(void* exercises_args){
 
 	Exercise * arg = (Exercise*) exercises_args;
 
@@ -110,7 +110,7 @@ int main() {
 		}
 	}
 
-	pthread_create(&banco_supininho, NULL, f_bench_press, &supino);
+	pthread_create(&banco_supininho, NULL, f_treino, &supino);
 
 
 
