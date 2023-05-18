@@ -4,121 +4,106 @@
 #include <unistd.h>
 #include <semaphore.h>
 
-#define N_FILA 1
-#define N_BENCHES 1
-#define N_EXERCISES 3 
-
+#define N_CAPACIDADE 5 
+#define N_MACHINES 2
+#define N_EXERCISES 4  
 #define N_USERS 8
-#define seed 142022
 
-sem_t espera; 				// somente uma pessoa espera, se tiver mais do que alguem esperando você sai
-sem_t supino_disponivel; 		// 
-sem_t supino_feito;		//
-sem_t banco_ocupado;		//
+sem_t espera_entrada;                   // Semaforo de espera representando a capacidade maxima da academia
+sem_t exercise_available[N_EXERCISES];  // Semaforos para distribuicao das maquinas livres por cada exercicio.
+sem_t exercise_done[N_EXERCISES];       // Semaforos para distribuicao do sinal de completude do exercicio por maquina
+sem_t exercise_in_use[N_EXERCISES];     // Semaforos para indicar a ocupação das maquinas para cada exercicio
 
-typedef struct{
+// User function
+void* f_maromba(void* user_arg) {
+    int* id = (int*)user_arg;
 
-	char name_ab;
-	int user_id;
-	int machine_id;
+    int user_id = *id;
+    int machine_slot = -9; 
+    // sleep(1);
 
-} Exercise;
+    if (sem_trywait(&espera_entrada) == 0) {
+        printf("%d : Entrei na OitoEncaixes.\n", user_id);
 
-typedef struct {
-	int reps_per_exercise[N_EXERCISES];
-	int sets_per_exercise[N_EXERCISES];
-	int id;
-} User;
+        for (int i = 0; i < N_EXERCISES; i++) {
 
+            int machine_id = (user_id + i) % N_EXERCISES;
+            sem_wait(&exercise_available[machine_id]);
+            sem_getvalue(&exercise_available[machine_id], &machine_slot);
 
-// user function
-void* f_maromba(void* maromba_args) {
+            printf("%d : Fazendo Exercicio %c na maquina %d.\n", user_id, 'A' + machine_id, machine_slot );
+            sem_post(&exercise_in_use[machine_id]);
+            sem_wait(&exercise_done[machine_id]);
+            sem_post(&exercise_available[machine_id]);
+            printf("%d : Terminou Exercicio %c na maquina %d.\n", user_id, 'A' + machine_id, machine_slot);
 
-	User * args = (User *) maromba_args;
+        }
 
-	// sleep(1);
+        sem_post(&espera_entrada);
 
-	if (sem_trywait(&espera) == 0){
+        printf("%d : Terminou o treino e vai embora!.\n", user_id);
+    }
+    else {
+        printf("%d : Academia esta cheia!! Vai embora!\n", user_id);
+    }
 
-		printf("%d : TO NA FILA DO SUPINO\n", args->id);
-		sem_wait(&supino_disponivel);
-
-		printf("%d : sentou no banco\n", args->id);
-
-		sem_post(&espera);
-		sem_post(&banco_ocupado);
-		
-		sem_wait(&supino_feito);
-		sem_post(&supino_disponivel);
-		
-		printf("%d : Terminei a serie meno\n", args->id);
-	}
-	else{
-		// no futuro inserir codigo pra ir em outra maquina tambem
-		printf("%d: seloko vou esperar nao six ta cheia\n", args->id);
-	}
-
-	return NULL;
+    return NULL;
 }
 
+// Exercise machine function
+void* f_exercise_machine(void* machine_args) {
+    int* arg = (int*)machine_args;
+    int machine_id = *arg;
 
-// bench press
-void* f_treino(void* exercises_args){
+    while (1) {
+        sem_wait(&exercise_in_use[machine_id]);
+        sleep(1); // pausa para simular a execucao dos exercicios
+        sem_post(&exercise_done[machine_id]);
+    }
 
-	Exercise * arg = (Exercise*) exercises_args;
-
-	while(1){
-		sem_wait(&banco_ocupado);
-		printf("fez uma serie de %c no banco %d\n", arg->name_ab, arg->machine_id);
-		sleep(1);
-		sem_post(&supino_feito);
-	}
-
-	return NULL;
+    return NULL;
 }
 
+int main() {
+
+    printf("Parameters:\nCAPACIDADE DA ACADEMIA:%d\nNUMERO DE MAQUINAS:%d\nNUMERO DE EXERCICIOS:%d\n\n", N_CAPACIDADE, N_MACHINES, N_EXERCISES);
+
+    int att[N_USERS];
+    int exercises[N_EXERCISES];
+    
+    pthread_t th_vec[N_USERS];
+    pthread_t exercise_machine[N_EXERCISES];
 
 
-int main() {   
+    sem_init(&espera_entrada, 0, N_CAPACIDADE);
+    for (int i = 0; i < N_EXERCISES; i++) {
+        sem_init(&exercise_available[i], 0, N_MACHINES);
+        sem_init(&exercise_done[i], 0, 0);
+        sem_init(&exercise_in_use[i], 0, 0);
+        exercises[i] = i;
+    }
 
-	printf("im working\n");
+    for (int i = 0; i < N_USERS; i++) {
+        att[i] = i;
+        if (pthread_create(th_vec + i, NULL, &f_maromba, &att[i]) != 0) {
+            perror("Failed to create thread");
+            return 1;
+        }
+    }
 
-	long t;
-	User att[N_USERS];
-	pthread_t th_vec[N_USERS];
-	pthread_t banco_supininho;
+    for (int i = 0; i < N_EXERCISES; i++) {
+        if(pthread_create(exercise_machine + i, NULL, &f_exercise_machine, &exercises[i]) != 0){
+            return 2;
+        }
+    }
 
-	Exercise supino;
-
-	sem_init(&espera, 0, N_FILA);
-	sem_init(&supino_disponivel, 0, N_BENCHES);
-	sem_init(&supino_feito, 0, 0);
-	sem_init(&banco_ocupado, 0, 0);
-
-
-	supino.machine_id = 0;
-	supino.name_ab = 'S';
-	supino.user_id = 88;
-
-	for (t = 0; t < N_USERS; t++) {
-
-		att[t].id = t;
-
-		if (pthread_create(th_vec + t, NULL, &f_maromba, &att[t]) != 0){ // th + i = &th[i]
-			perror("Failed to create thread");
-			return 1;
-		}
-	}
-
-	pthread_create(&banco_supininho, NULL, f_treino, &supino);
+    // Wait for all threads to finish
+    for (int t = 0; t < N_USERS; t++) {
+        if (pthread_join(th_vec[t], NULL)) {
+            return 3;
+        }
+    }
 
 
-
-	// Wait for all threads to finish
-	for (t = 0; t < N_USERS; t++) {
-		if  (pthread_join(th_vec[t], NULL)){
-			return 2;
-		}
-	}
-	printf("not deadlocked baby\n");
+    return 0;
 }
