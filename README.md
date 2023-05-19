@@ -36,8 +36,9 @@ Porém em Marquês Geraldo, as leis que governam os marombeiros são diferentes 
 1. Todos fazem os mesmos exercícios, afinal o shape é um só.
 2. Como treinam muito pesado, é preciso fazer somente uma série para cada exercício.
 3. Todos são extremamente ratos de academia, ou seja, não saem da academia até fazerem todos exercícios.
-4. São muito metodologicos com o treino, isto é, ao entrar na máquina só saem até completarem a série.
-5. Respeitam o distanciamento social, isto é , se a academia está cheia eles vão embora.
+4. Não respeitam a ordem da ficha, se for preciso pular a ordem do exercício, o farão.
+5. São muito metodologicos com o treino, isto é, ao entrar na máquina só saem até completarem a série.
+6. Respeitam o distanciamento social, isto é , se a academia está cheia eles vão embora.
 
 Para adequar-se as necessidades do povo de Marquês Geraldo, a Oito Encaixes possui:
 
