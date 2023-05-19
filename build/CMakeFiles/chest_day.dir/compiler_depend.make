@@ -26,7 +26,6 @@ CMakeFiles/chest_day.dir/src/chest_day.c.obj: C:/grad/mc504/mc504-escalador/src/
   C:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sec_api/sys/timeb_s.h \
   C:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/pthread_compat.h \
   C:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/pthread_unistd.h \
-  C:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/semaphore.h \
   C:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/stdio.h \
   C:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/_mingw_print_push.h \
   C:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/swprintf.inl \
@@ -39,7 +38,8 @@ CMakeFiles/chest_day.dir/src/chest_day.c.obj: C:/grad/mc504/mc504-escalador/src/
   C:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/io.h \
   C:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/string.h \
   C:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sec_api/string_s.h \
-  C:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/getopt.h
+  C:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/getopt.h \
+  C:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/semaphore.h
 
 
 C:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/pthread.h:
@@ -100,8 +100,6 @@ C:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/pthread_compat.h:
 
 C:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/pthread_unistd.h:
 
-C:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/semaphore.h:
-
 C:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/stdio.h:
 
 C:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/swprintf.inl:
@@ -119,3 +117,5 @@ C:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/unistd.h:
 C:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sec_api/string_s.h:
 
 C:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/io.h:
+
+C:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/semaphore.h:
