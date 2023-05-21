@@ -1,10 +1,13 @@
 # Programa Multithread
 
-O repositorio contém o código para a execução do projeto do primeiro modulo da disciplina de MC504 - Sistemas Operacionais
+O repositorio contém o código para a execução do projeto do primeiro modulo da disciplina de MC504 - Sistemas Operacionais dos alunos:
+* Ariadne Bigheti 231580 - EC021
+* Arthur Rezende 166003 - EC021
+
 
 ## Overview
 
-O objetivo deste projeto é adaptar e melhorar o problema do barbeiro dorminhoco. Utilizando threads e semaforos.
+O objetivo deste projeto é adaptar e melhorar o problema do barbeiro dorminhoco com um contexto de academia através de threads e semaforos.
 
 ## Instrucoes CMake
 
@@ -31,7 +34,7 @@ python log_generator.py
 ```
 O log estara salvo na pasta `OitoEncaixesViewer/OitoEncaixesViewer/log.txt `
 
-Para a visualização foi gerado um log com o programa em C. E a visualização foi construída por cima do log em Swift.
+Para a visualização foi gerado um log com o programa em C. E a visualização foi construída por cima do log em Swift por efeitos estéticos do programa.
 
 ## Construcao do Projeto
 
