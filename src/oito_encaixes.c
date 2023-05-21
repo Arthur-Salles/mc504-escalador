@@ -34,8 +34,8 @@ void* f_maromba(void* user_arg) {
             printf("%d : Fazendo Exercicio %c na maquina %d.\n", user_id, 'A' + machine_id, machine_slot );
             sem_post(&exercise_in_use[machine_id]);
             sem_wait(&exercise_done[machine_id]);
-            sem_post(&exercise_available[machine_id]);
             printf("%d : Terminou Exercicio %c na maquina %d.\n", user_id, 'A' + machine_id, machine_slot);
+            sem_post(&exercise_available[machine_id]);
 
         }
 
