@@ -17,10 +17,8 @@ sem_t exercise_in_use[N_EXERCISES];     // Semaforos para indicar a ocupação d
 // User function
 void* f_maromba(void* user_arg) {
     int* id = (int*)user_arg;
-
     int user_id = *id;
     int machine_slot = -9; 
-    // sleep(1);
 
     if (sem_trywait(&espera_entrada) == 0) {
         printf("%d : Entrei na OitoEncaixes.\n", user_id);
@@ -30,7 +28,6 @@ void* f_maromba(void* user_arg) {
             int machine_id = (user_id + i) % N_EXERCISES;
             sem_wait(&exercise_available[machine_id]);
             sem_getvalue(&exercise_available[machine_id], &machine_slot);
-
             printf("%d : Fazendo Exercicio %c na maquina %d.\n", user_id, 'A' + machine_id, machine_slot );
             sem_post(&exercise_in_use[machine_id]);
             sem_wait(&exercise_done[machine_id]);
@@ -70,10 +67,8 @@ int main() {
 
     int att[N_USERS];
     int exercises[N_EXERCISES];
-    
     pthread_t th_vec[N_USERS];
     pthread_t exercise_machine[N_EXERCISES];
-
 
     sem_init(&espera_entrada, 0, N_CAPACIDADE);
     for (int i = 0; i < N_EXERCISES; i++) {
@@ -86,7 +81,6 @@ int main() {
     for (int i = 0; i < N_USERS; i++) {
         att[i] = i;
         if (pthread_create(th_vec + i, NULL, &f_maromba, &att[i]) != 0) {
-            perror("Failed to create thread");
             return 1;
         }
     }
@@ -97,7 +91,7 @@ int main() {
         }
     }
 
-    // Wait for all threads to finish
+    // Espera as threads dos usuários.
     for (int t = 0; t < N_USERS; t++) {
         if (pthread_join(th_vec[t], NULL)) {
             return 3;
