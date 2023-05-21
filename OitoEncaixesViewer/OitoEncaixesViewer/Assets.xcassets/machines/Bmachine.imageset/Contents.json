@@ -1,0 +1,21 @@
+{
+  "images" : [
+    {
+      "filename" : "Lovepik_com-450128609-Bench press gym equipment 3d modelling.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
