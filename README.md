@@ -23,6 +23,14 @@ Apos clonar o repositorio, run:
 ```
 Isso irá criar os executáveis na pasta build. Para compilar, rode `make`
 
+Para visualizar gerar um log do processo basta :
+ 
+```
+cd build 
+python log_generator.py
+```
+O log estara salvo na pasta `OitoEncaixesViewer/OitoEncaixesViewer/log.txt `
+
 Para a visualização foi gerado um log com o programa em C. E a visualização foi construída por cima do log em Swift.
 
 ## Construcao do Projeto
