@@ -12,9 +12,10 @@ struct UserView: View {
     
     var body: some View {
         VStack {
-            Text("\(String(viewModel.exercisesFinished))/\(String(viewModel.totalExercisesToDo))")
+            Text("\(String(viewModel.exercisesFinished)) / \(String(viewModel.totalExercisesToDo))")
             HStack {
                 Text(viewModel.id)
+                    .font(.title2)
                 Image(viewModel.imageName)
                     .resizable()
                     .frame(width: 50, height: 50)

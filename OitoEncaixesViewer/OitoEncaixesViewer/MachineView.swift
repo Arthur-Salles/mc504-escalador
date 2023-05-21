@@ -15,14 +15,15 @@ struct MachineView: View {
 
             Image(viewModel.imageName)
                 .resizable()
-                .frame(width: 180, height: 180)
+                .frame(width: 160, height: 160)
             
             if viewModel.isBeignUsed {
                 if let user = viewModel.userUsing {
                     VStack {
-                        Text("\(String(user.exercisesFinished))/\(String(user.totalExercisesToDo))")
+                        Text("\(String(user.exercisesFinished)) / \(String(user.totalExercisesToDo))")
                         HStack {
                             Text(user.id)
+                                .font(.title2)
                             Image(user.imageName)
                                 .resizable()
                                 .frame(width: 50, height: 50)
@@ -33,6 +34,7 @@ struct MachineView: View {
             } else {
                 HStack {
                     Text("0")
+                        .font(.title2)
                         .foregroundColor(.clear)
                     Rectangle()
                         .foregroundColor(.clear)

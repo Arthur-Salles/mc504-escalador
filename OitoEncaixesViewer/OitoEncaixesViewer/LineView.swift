@@ -16,9 +16,10 @@ struct LineView: View {
     var body: some View {
         if waitingUsers.isEmpty {
             VStack {
-                Text("0/4")
+                Text("0 / 4")
                 HStack {
                     Text("0")
+                        .font(.title2)
                     Rectangle()
                         .frame(height: 50)
                 }

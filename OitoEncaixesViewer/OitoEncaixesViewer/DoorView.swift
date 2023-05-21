@@ -16,7 +16,7 @@ struct DoorView: View {
                 .frame(width: 120, height: 10)
                 .foregroundColor(.clear)
             Rectangle()
-                .frame(height: 10)
+                .frame(height: 15)
                 .foregroundColor(.black)
         }
     }

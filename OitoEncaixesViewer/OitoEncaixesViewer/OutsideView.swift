@@ -20,6 +20,7 @@ struct OutsideView: View {
                 VStack {
                     HStack {
                         Text(user.id)
+                            .font(.title2)
                         Image(user.imageName)
                             .resizable()
                             .frame(width: 50, height: 50)

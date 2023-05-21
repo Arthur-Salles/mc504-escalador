@@ -98,7 +98,7 @@ class GymViewModel: ObservableObject {
     func executeLogInstructions() {
         var userId: String
         if !logData.isEmpty {
-            let i: Int = min(4, logData.count-1)
+            let i: Int = min(5, logData.count-1)
             
             let log = logData[i]
             print(log)

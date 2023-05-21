@@ -14,32 +14,35 @@ struct GymView: View {
     @StateObject var gymViewModel: GymViewModel = GymViewModel()
     
     var body: some View {
-        VStack {
-            OutsideView()
-                .background(Color.green)
-                .environmentObject(gymViewModel)
-            DoorView(gymCapacity: gymViewModel.gymCapacity)
-            LineView(waitingUsers: $gymViewModel.waitingList)
-            MachinesView(machines: $gymViewModel.machineModels)
-            Spacer()
-            HStack {
+        ScrollView {
+            VStack(alignment: .center, spacing: 0) {
+                OutsideView()
+                    .environmentObject(gymViewModel)
+                DoorView(gymCapacity: gymViewModel.gymCapacity)
+                Image("oitoEncaixesLogo")
+                    .resizable()
+                    .frame(width: 270, height: 100)
                 Text("CAPACIDADE MÁXIMA: " + String(gymViewModel.gymCapacity))
+                    .font(.callout)
                     .fontWeight(.bold)
                     .foregroundColor(.black)
-                Spacer()
-                Button(action: {
-                    
-                    gymViewModel.executeLogInstructions()
-                }, label: {
-                    Text("NEXT")
-                        .fontWeight(.bold)
-                        .foregroundColor(.black)
-                })
+                LineView(waitingUsers: $gymViewModel.waitingList)
+                MachinesView(machines: $gymViewModel.machineModels)
+               HStack {
+                    Spacer()
+                    Button(action: {
+                        
+                        gymViewModel.executeLogInstructions()
+                    }, label: {
+                        Text("NEXT")
+                            .fontWeight(.bold)
+                            .foregroundColor(.black)
+                    })
+                }.padding(30)
+                
             }
-            .padding(20)
-            
         }
-        .background(.gray)
+        .background(Color.gray.opacity(0.3))
     }
 }
 
